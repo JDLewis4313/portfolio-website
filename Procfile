@@ -1,1 +1,1 @@
-web: gunicorn portfolio.wsgi --log-file - 
+web: gunicorn portfolio.wsgi:application --host 0.0.0.0 --port $PORT
