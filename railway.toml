@@ -1,8 +1,0 @@
-[build]
-builder = "nixpacks"
-
-[deploy]
-startCommand = "gunicorn portfolio.wsgi:application --bind 0.0.0.0:$PORT"
-
-[env]
-DJANGO_SETTINGS_MODULE = "portfolio.settings"
