@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - My Portfolio{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">
+                    Hi, I'm a <span class="text-warning">Full-Stack Developer</span>
+                </h1>
+                <p class="lead mb-4">
+                    Passionate about building web applications with Django, PostgreSQL, and modern technologies. 
+                    Currently studying Computer Science and expanding my development skills.
+                </p>
+                <div class="d-flex gap-3">
+                    <a href="{% url 'projects' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-laptop-code me-2"></i>View My Projects
+                    </a>
+                    <a href="{% url 'contact' %}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-envelope me-2"></i>Get In Touch
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center" 
+                     style="width: 200px; height: 200px;">
+                    <i class="fas fa-code text-primary" style="font-size: 4rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Technologies Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Technologies I Use</h2>
+            <p class="text-muted">My current tech stack and tools</p>
+        </div>
+        <div class="row justify-content-center">
+            {% for tech in technologies %}
+            <div class="col-auto mb-3">
+                <span class="tech-badge text-white" style="background-color: {{ tech.color }};">
+                    {{ tech.name }}
+                </span>
+            </div>
+            {% empty %}
+            <p class="text-center text-muted">No technologies added yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Featured Projects Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Featured Projects</h2>
+            <p class="text-muted">Some of my recent work</p>
+        </div>
+        <div class="row">
+            {% for project in featured_projects %}
+            <div class="col-lg-4 mb-4">
+                <div class="card h-100 card-hover">
+                    {% if project.thumbnail %}
+                    <img src="{{ project.thumbnail.url }}" class="card-img-top" alt="{{ project.title }}" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                    <div class="card-img-top bg-primary d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="fas fa-laptop-code text-white fa-3x"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ project.title }}</h5>
+                        <p class="card-text">{{ project.description|truncatewords:20 }}</p>
+                        <div class="mb-3">
+                            {% for tech in project.technologies.all %}
+                            <span class="tech-badge text-white" style="background-color: {{ tech.color }};">
+                                {{ tech.name }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                        <div class="mt-auto">
+                            <a href="{% url 'project_detail' project.slug %}" class="btn btn-primary">
+                                <i class="fas fa-eye me-1"></i>View Details
+                            </a>
+                            {% if project.github_url %}
+                            <a href="{{ project.github_url }}" class="btn btn-outline-secondary" target="_blank">
+                                <i class="fab fa-github me-1"></i>Code
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-laptop-code text-muted fa-3x mb-3"></i>
+                    <h4 class="text-muted">No featured projects yet</h4>
+                    <p class="text-muted">Check back soon for updates!</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% if featured_projects %}
+        <div class="text-center">
+            <a href="{% url 'projects' %}" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-right me-1"></i>View All Projects
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Recent Blog Posts Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Latest Blog Posts</h2>
+            <p class="text-muted">My learning journey and insights</p>
+        </div>
+        <div class="row">
+            {% for post in recent_posts %}
+            <div class="col-lg-4 mb-4">
+                <div class="card h-100 card-hover">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-secondary">{{ post.get_category_display }}</span>
+                            <small class="text-muted">{{ post.published_date|date:"M d, Y" }}</small>
+                        </div>
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        <p class="card-text">
+                            {% if post.excerpt %}
+                                {{ post.excerpt|truncatewords:15 }}
+                            {% else %}
+                                {{ post.content|truncatewords:15 }}
+                            {% endif %}
+                        </p>
+                        <div class="mt-auto">
+                            <a href="{% url 'blog_detail' post.slug %}" class="btn btn-outline-primary">
+                                <i class="fas fa-arrow-right me-1"></i>Read More
+                            </a>
+                            <small class="text-muted ms-2">
+                                <i class="fas fa-eye me-1"></i>{{ post.views }} views
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-blog text-muted fa-3x mb-3"></i>
+                    <h4 class="text-muted">No blog posts yet</h4>
+                    <p class="text-muted">Coming soon!</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% if recent_posts %}
+        <div class="text-center">
+            <a href="{% url 'blog' %}" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-right me-1"></i>View All Posts
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
