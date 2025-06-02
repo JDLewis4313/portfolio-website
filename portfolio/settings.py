@@ -12,7 +12,7 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-o11o_2&ydq*@w0v=c(f0_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.railway.app', '.render.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.railway.app']
 
 # Application definition
 INSTALLED_APPS = [
@@ -98,16 +98,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Production settings
-if os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('RENDER'):
-    DEBUG = False
-    ALLOWED_HOSTS = ['.railway.app', '.up.railway.app', '.render.com', '.onrender.com']
-    
-    # Use production PostgreSQL database
-    DATABASES = {
-        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
-    }
-    
-    # Static files for production
-    MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Simple production settings
+if not DEBUG:
+    ALLOWED_HOSTS = ['*']  # Allow all hosts for now
+    STATIC_ROOT = BASE_DIR / 'staticfiles'

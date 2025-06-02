@@ -1,1 +1,1 @@
-web: bash start.sh
+web: gunicorn portfolio.wsgi --log-file - 
