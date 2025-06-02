@@ -17,14 +17,17 @@ ALLOWED_HOSTS = [
     '127.0.0.1', 
     '.railway.app', 
     '.up.railway.app',
-    'web-production-d54c7.up.railway.app'
+    'web-production-d54c7.up.railway.app',
+    '*'  # Temporary - allows all hosts
 ]
 
-# CSRF trusted origins for Railway
+# CSRF trusted origins
 CSRF_TRUSTED_ORIGINS = [
     'https://web-production-d54c7.up.railway.app',
     'https://*.railway.app',
-    'https://*.up.railway.app'
+    'https://*.up.railway.app',
+    'http://127.0.0.1:8000',
+    'http://localhost:8000'
 ]
 
 # Application definition
@@ -40,7 +43,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # For static files in production
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Must be after SecurityMiddleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -98,17 +101,26 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+# Static files configuration
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Only include static directory if it exists
+# Create static directory if it doesn't exist
 STATICFILES_DIRS = []
-if (BASE_DIR / 'static').exists():
-    STATICFILES_DIRS.append(BASE_DIR / 'static')
+static_dir = BASE_DIR / 'static'
+if static_dir.exists():
+    STATICFILES_DIRS.append(static_dir)
+else:
+    # Create the directory for Railway
+    static_dir.mkdir(exist_ok=True)
+    STATICFILES_DIRS.append(static_dir)
 
-# Simplified static files storage for production
+# Static files storage for production
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# WhiteNoise configuration for serving static files
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_AUTOREFRESH = True
 
 # Media files
 MEDIA_URL = '/media/'
@@ -117,14 +129,26 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Production overrides
+# Production-specific settings
 if os.environ.get('RAILWAY_ENVIRONMENT'):
     DEBUG = False
     
-    # Security settings for production
+    # More permissive settings for Railway
+    CSRF_COOKIE_SECURE = False
+    CSRF_COOKIE_SAMESITE = 'Lax'
+    SESSION_COOKIE_SECURE = False
+    
+    # Static files - use simpler storage for Railway
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+    
+    # Security settings (less strict for debugging)
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    X_FRAME_OPTIONS = 'DENY'
+    X_FRAME_OPTIONS = 'SAMEORIGIN'  # Changed from DENY
+    SECURE_SSL_REDIRECT = False  # Let Railway handle SSL
     
-    # Don't force HTTPS redirect as Railway handles this
-    SECURE_SSL_REDIRECT = False
+    # Force static files to be found
+    STATICFILES_FINDERS = [
+        'django.contrib.staticfiles.finders.FileSystemFinder',
+        'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    ]
