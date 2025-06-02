@@ -1,0 +1,115 @@
+Database Engine: django.db.backends.postgresql
+Database Name: portfolio_db
+Database Host: localhost
+Database Port: 5432
+[
+{
+  "model": "main.technology",
+  "pk": 1,
+  "fields": {
+    "name": "Python",
+    "category": "language",
+    "color": "#3498ab"
+  }
+},
+{
+  "model": "main.technology",
+  "pk": 2,
+  "fields": {
+    "name": "Django",
+    "category": "framework",
+    "color": "#092e20"
+  }
+},
+{
+  "model": "main.technology",
+  "pk": 3,
+  "fields": {
+    "name": "PostgreSQL",
+    "category": "database",
+    "color": "#336791"
+  }
+},
+{
+  "model": "main.technology",
+  "pk": 4,
+  "fields": {
+    "name": "HTML",
+    "category": "frontend",
+    "color": "#e34f26"
+  }
+},
+{
+  "model": "main.technology",
+  "pk": 5,
+  "fields": {
+    "name": "CSS",
+    "category": "frontend",
+    "color": "#1572b6"
+  }
+},
+{
+  "model": "main.project",
+  "pk": 1,
+  "fields": {
+    "title": "Django Portfolio Website",
+    "slug": "django-portfolio-website",
+    "description": "A full-stack portfolio website built with Django and PostgreSQL to showcase my projects and learning journey.",
+    "detailed_description": "This project demonstrates my understanding of web development fundamentals, database design, and modern development practices. Built as part of my Computer Science foundations course.",
+    "github_url": "https://github.com/yourusername/portfolio",
+    "demo_url": "",
+    "status": "development",
+    "priority": 10,
+    "featured": false,
+    "thumbnail": "",
+    "screenshots": "",
+    "created_date": "2025-06-01T21:40:10.644Z",
+    "updated_date": "2025-06-01T21:40:10.644Z",
+    "completion_date": null,
+    "technologies": [
+      3,
+      2,
+      5,
+      4,
+      1
+    ]
+  }
+},
+{
+  "model": "main.blogpost",
+  "pk": 1,
+  "fields": {
+    "title": "Setting Up My First Django Project",
+    "slug": "setting-up-my-first-django-project",
+    "content": "Learning to program can be very challenging, especially if you are aware of the tons of programming languages out there and have found it difficult to simply, begin coding. That my friend is the most important part, to begin.  Like many of you who may be reading this, I found it difficult to pick a language, ultimately I picked Python and committed to learning a stack. That's it, Python, and a stack involving it. Now mind you, I already had some extensive experience with HTML and CSS with and a dose of JavaScript. The common web development stack, but I wanted to gain frontend and backend experience. Thus, why I had to choose between Python, Java, C, #C. Whew. You get the picture, but why did I choose Python? As many of you will hear, it's syntax is relatively easy to master, being so closely related to English. But to be honest, it's popularity got me to. It's easy to find courses and do projects with Python and the IDEs, so many great options including VS Studio. So, how did I get to my stack? Let me explain!",
+    "excerpt": "Learning how to set up Django with PostgreSQL and create a portfolio website from scratch.",
+    "category": "learning",
+    "related_project": 1,
+    "published": false,
+    "published_date": null,
+    "created_date": "2025-06-01T21:51:40.808Z",
+    "updated_date": "2025-06-01T21:51:40.808Z",
+    "views": 0,
+    "tags": [],
+    "related_technologies": [
+      3,
+      2,
+      5,
+      4,
+      1
+    ]
+  }
+},
+{
+  "model": "main.skill",
+  "pk": 1,
+  "fields": {
+    "name": "Python Programming",
+    "category": "programming",
+    "proficiency": "intermediate",
+    "years_experience": "2.0",
+    "description": "Learning Python through academic coursework and personal projects. Comfortable with basic syntax, data structures, and web development.",
+    "show_on_resume": true
+  }
+}
+]
