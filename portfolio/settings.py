@@ -18,7 +18,7 @@ ALLOWED_HOSTS = [
     '.railway.app', 
     '.up.railway.app',
     'web-production-d54c7.up.railway.app',
-    '*'  # Temporary - allows all hosts
+    '*'
 ]
 
 # CSRF trusted origins
@@ -38,12 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'main',  # Your portfolio app
+    'main',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Must be after SecurityMiddleware
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -101,7 +101,7 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files configuration
+# Static files
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
@@ -110,17 +110,6 @@ STATICFILES_DIRS = []
 static_dir = BASE_DIR / 'static'
 if static_dir.exists():
     STATICFILES_DIRS.append(static_dir)
-else:
-    # Create the directory for Railway
-    static_dir.mkdir(exist_ok=True)
-    STATICFILES_DIRS.append(static_dir)
-
-# Static files storage for production
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-# WhiteNoise configuration for serving static files
-WHITENOISE_USE_FINDERS = True
-WHITENOISE_AUTOREFRESH = True
 
 # Media files
 MEDIA_URL = '/media/'
@@ -129,25 +118,48 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Production-specific settings
+# Authentication backends
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+# Session configuration
+SESSION_COOKIE_AGE = 86400  # 24 hours
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_HTTPONLY = True
+
+# CSRF configuration
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_USE_SESSIONS = False
+
+# Production settings for Railway
 if os.environ.get('RAILWAY_ENVIRONMENT'):
     DEBUG = False
     
-    # More permissive settings for Railway
-    CSRF_COOKIE_SECURE = False
-    CSRF_COOKIE_SAMESITE = 'Lax'
-    SESSION_COOKIE_SECURE = False
+    # Admin-specific settings for Railway
+    LOGIN_URL = '/admin/login/'
+    LOGIN_REDIRECT_URL = '/admin/'
+    LOGOUT_REDIRECT_URL = '/admin/login/'
     
-    # Static files - use simpler storage for Railway
-    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-    
-    # Security settings (less strict for debugging)
+    # Less restrictive security for admin to work
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    X_FRAME_OPTIONS = 'SAMEORIGIN'  # Changed from DENY
-    SECURE_SSL_REDIRECT = False  # Let Railway handle SSL
+    X_FRAME_OPTIONS = 'SAMEORIGIN'
+    SECURE_SSL_REDIRECT = False
     
-    # Force static files to be found
+    # Static files configuration for Railway
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+    WHITENOISE_USE_FINDERS = True
+    WHITENOISE_AUTOREFRESH = True
+    
+    # Force session settings for admin
+    SESSION_COOKIE_DOMAIN = None
+    SESSION_COOKIE_PATH = '/'
+    
+    # Ensure admin static files are served
     STATICFILES_FINDERS = [
         'django.contrib.staticfiles.finders.FileSystemFinder',
         'django.contrib.staticfiles.finders.AppDirectoriesFinder',
