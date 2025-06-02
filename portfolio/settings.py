@@ -12,7 +12,20 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-o11o_2&ydq*@w0v=c(f0_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.railway.app']
+ALLOWED_HOSTS = [
+    'localhost', 
+    '127.0.0.1', 
+    '.railway.app', 
+    '.up.railway.app',
+    'web-production-d54c7.up.railway.app'
+]
+
+# CSRF trusted origins for Railway
+CSRF_TRUSTED_ORIGINS = [
+    'https://web-production-d54c7.up.railway.app',
+    'https://*.railway.app',
+    'https://*.up.railway.app'
+]
 
 # Application definition
 INSTALLED_APPS = [
@@ -27,6 +40,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # For static files in production
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -87,9 +101,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
+
+# Only include static directory if it exists
+STATICFILES_DIRS = []
+if (BASE_DIR / 'static').exists():
+    STATICFILES_DIRS.append(BASE_DIR / 'static')
+
+# Simplified static files storage for production
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files
 MEDIA_URL = '/media/'
@@ -98,7 +117,14 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Simple production settings
-if not DEBUG:
-    ALLOWED_HOSTS = ['*']  # Allow all hosts for now
-    STATIC_ROOT = BASE_DIR / 'staticfiles'
+# Production overrides
+if os.environ.get('RAILWAY_ENVIRONMENT'):
+    DEBUG = False
+    
+    # Security settings for production
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
+    
+    # Don't force HTTPS redirect as Railway handles this
+    SECURE_SSL_REDIRECT = False
