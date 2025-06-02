@@ -72,12 +72,34 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'portfolio.wsgi.application'
 
-# Database
-DATABASES = {
-    'default': dj_database_url.parse(
-        config('DATABASE_URL', default='sqlite:///db.sqlite3')
-    )
-}
+# Database Configuration - Multiple fallback options for Railway
+# Priority: DATABASE_PUBLIC_URL > Individual PG variables > DATABASE_URL > SQLite
+
+# Try DATABASE_PUBLIC_URL first (best for Railway external connections)
+database_public_url = config('DATABASE_PUBLIC_URL', default=None)
+if database_public_url:
+    DATABASES = {
+        'default': dj_database_url.parse(database_public_url)
+    }
+# Try individual PostgreSQL variables
+elif config('PGHOST', default=None):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('PGDATABASE', default='railway'),
+            'USER': config('PGUSER', default='postgres'),
+            'PASSWORD': config('PGPASSWORD', default=''),
+            'HOST': config('PGHOST', default='localhost'),
+            'PORT': config('PGPORT', default='5432'),
+        }
+    }
+# Fallback to DATABASE_URL (might have internal hostname issue)
+else:
+    DATABASES = {
+        'default': dj_database_url.parse(
+            config('DATABASE_URL', default='sqlite:///db.sqlite3')
+        )
+    }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -164,3 +186,10 @@ if os.environ.get('RAILWAY_ENVIRONMENT'):
         'django.contrib.staticfiles.finders.FileSystemFinder',
         'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     ]
+
+# Debug database configuration (only in development)
+if DEBUG and config('DATABASE_URL', default='').startswith('postgresql'):
+    print(f"Database Engine: {DATABASES['default']['ENGINE']}")
+    print(f"Database Name: {DATABASES['default']['NAME']}")
+    print(f"Database Host: {DATABASES['default']['HOST']}")
+    print(f"Database Port: {DATABASES['default']['PORT']}")
