@@ -21,16 +21,17 @@ ALLOWED_HOSTS = [
     '*'
 ]
 
-# CSRF trusted origins
+# CSRF trusted origins (ENHANCED FOR API)
 CSRF_TRUSTED_ORIGINS = [
     'https://web-production-d54c7.up.railway.app',
     'https://*.railway.app',
     'https://*.up.railway.app',
     'http://127.0.0.1:8000',
-    'http://localhost:8000'
+    'http://localhost:8000',
+    'https://*.vercel.app',  # Added for Next.js frontend
 ]
 
-# Application definition
+# Application definition (ENHANCED WITH DRF)
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -38,10 +39,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # Django REST Framework (ADDED)
+    'rest_framework',
+    'corsheaders',
+    
     'main',
 ]
 
+# Middleware (ENHANCED WITH CORS)
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # ADDED - must be first
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -193,3 +201,13 @@ if DEBUG and config('DATABASE_URL', default='').startswith('postgresql'):
     print(f"Database Name: {DATABASES['default']['NAME']}")
     print(f"Database Host: {DATABASES['default']['HOST']}")
     print(f"Database Port: {DATABASES['default']['PORT']}")
+
+# ===== DJANGO REST FRAMEWORK CONFIGURATION (ADDED) =====
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ]
+}
+
+# ===== CORS CONFIGURATION (ADDED) =====
+CORS_ALLOW_ALL_ORIGINS = True  # For development - we'll restrict this later
