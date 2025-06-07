@@ -1,12 +1,15 @@
-asgiref==3.8.1
-dj-database-url==2.3.0
-Django==5.2.1
-gunicorn==23.0.0
-packaging==25.0
-pillow==11.2.1
-psycopg2-binary==2.9.10
-python-decouple==3.8
-sqlparse==0.5.3
-typing_extensions==4.13.2
-tzdata==2025.2
-whitenoise==6.9.0
+# Add these two lines to your existing requirements.txt file:
+
+djangorestframework==3.14.0
+django-cors-headers==4.3.1
+
+# Your requirements.txt should now look something like:
+django==5.2.2
+psycopg2-binary
+python-decouple
+dj-database-url
+Pillow
+gunicorn
+whitenoise
+djangorestframework==3.14.0
+django-cors-headers==4.3.1
